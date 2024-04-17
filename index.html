@@ -65,18 +65,19 @@
 
     document.getElementById("shareBtn").addEventListener("click", function () {
       var qrCodeImage = document.querySelector("#qrCode img");
-      if (navigator.share) {
-        navigator.share({
-          title: "QR Code",
-          text: "Check out this QR code!",
-          url: qrCodeImage.src
-        })
-          .then(() => console.log("QR code shared successfully."))
-          .catch((error) => console.error("Error sharing QR code:", error));
-      } else {
-        alert("Sharing is not supported on this browser.");
-      }
+      shareWithGooglePay(qrCodeImage.src);
     });
+
+    function shareWithGooglePay(qrCodeImageSrc) {
+      var googlePayPaymentUrl = "https://pay.google.com/gp/v/pubtrans";
+
+      // Add parameters to the URL as needed
+      googlePayPaymentUrl += "?url=" + encodeURIComponent(qrCodeImageSrc);
+
+      // Open the Google Pay payment page in a new window
+      window.open(googlePayPaymentUrl, "_blank");
+    }
+
   </script>
 </body>
 
