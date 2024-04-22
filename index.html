@@ -36,7 +36,7 @@
     <button onclick="generateQRCode()">Generate QR Code</button>
     <div id="qrCode"></div>
     <button id="shareBtn" style="display: none">Share QR Code</button>
-    <a onclick="shareLinkAndFile()">Buy Now</a>
+    <button onclick="shareLinkAndFile()">Buy Now</button>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
       integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
@@ -46,12 +46,10 @@
     <script>
       const upi_address = encodeURIComponent("mab.037322004480280@axisbank");
       const amt = 100;
-
-      // Constructing the deep link URL
       const upiData =
         "upi://pay?pa=" + upi_address + "&am=" + amt + "&tn=Myloan";
 
-      function generateQRCode() {
+      async function generateQRCode() {
         console.log(upiData);
         var qrCodeDiv = document.getElementById("qrCode");
         qrCodeDiv.innerHTML = ""; // Clear previous QR code if any
@@ -65,22 +63,17 @@
         document.getElementById("shareBtn").style.display = "block";
       }
 
-      // Function to share link and file
       async function shareLinkAndFile() {
         try {
-          // Get the QR code image as a blob
+          await generateQRCode(); // Ensure QR code is generated before attempting to retrieve it
           const qrCodeBlob = await getQRCodeBlob();
-          // Check if Web Share API is available
           if (navigator.share) {
-            // Construct the data to share
             const data = {
               title: "Title of your share",
               text: "Description of your share",
               url: "upi://pay?",
               files: [qrCodeBlob],
             };
-
-            // Share the data
             await navigator.share(data);
           } else {
             throw new Error("Web Share API not supported");
@@ -90,7 +83,6 @@
         }
       }
 
-      // Function to convert QR code to Blob
       function getQRCodeBlob() {
         return new Promise((resolve, reject) => {
           const qrCodeCanvas = document.querySelector("#qrCode canvas");
