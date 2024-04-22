@@ -36,9 +36,7 @@
     <button onclick="generateQRCode()">Generate QR Code</button>
     <div id="qrCode"></div>
     <button id="shareBtn" style="display: none">Share QR Code</button>
-    <a href="upi://pay?pa=akshaypatel959697@okicici&pn=JohnDoe&cu=INR&am=1"
-      >Buy Now</a
-    >
+    <a onclick="shareLinkAndFile()">Buy Now</a>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
       integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
@@ -67,24 +65,48 @@
         document.getElementById("shareBtn").style.display = "block";
       }
 
-      document
-        .getElementById("shareBtn")
-        .addEventListener("click", function () {
-          var qrCodeImage = document.querySelector("#qrCode img");
-          shareWithGooglePay(qrCodeImage.src);
-        });
+      // Function to share link and file
+      async function shareLinkAndFile() {
+        try {
+          // Get the QR code image as a blob
+          const qrCodeBlob = await getQRCodeBlob();
+          // Check if Web Share API is available
+          if (navigator.share) {
+            // Construct the data to share
+            const data = {
+              title: "Title of your share",
+              text: "Description of your share",
+              url: "upi://pay?",
+              files: [qrCodeBlob],
+            };
 
-      function shareWithGooglePay(qrCodeImageSrc) {
-        var googlePayPaymentUrl = "https://pay.google.com/gp/v/pubtrans";
-
-        // Add parameters to the URL as needed
-        googlePayPaymentUrl += "?url=" + encodeURIComponent(qrCodeImageSrc);
-
-        // Open the Google Pay payment page in a new window
-        window.open(googlePayPaymentUrl, "_blank");
+            // Share the data
+            await navigator.share(data);
+          } else {
+            throw new Error("Web Share API not supported");
+          }
+        } catch (error) {
+          console.error("Error sharing:", error.message);
+        }
       }
 
-      //https://stackoverflow.com/questions/61852954/how-to-invoke-upi-payment-apps-from-url
+      // Function to convert QR code to Blob
+      function getQRCodeBlob() {
+        return new Promise((resolve, reject) => {
+          const qrCodeCanvas = document.querySelector("#qrCode canvas");
+          if (qrCodeCanvas) {
+            qrCodeCanvas.toBlob(
+              (blob) => {
+                resolve(blob);
+              },
+              "image/png",
+              1
+            );
+          } else {
+            reject(new Error("QR code canvas not found"));
+          }
+        });
+      }
     </script>
   </body>
 </html>
