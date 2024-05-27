@@ -37,6 +37,7 @@
     <div id="qrCode"></div>
     <button id="shareBtn" style="display: none">Share QR Code</button>
     <button onclick="shareLinkAndFile()">Buy Now</button>
+    <button onclick="shareLinkAndFile()">Test</button>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
       integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
@@ -63,6 +64,25 @@
         document.getElementById("shareBtn").style.display = "block";
       }
 
+
+  async function testing() {
+        try {
+          if (navigator.share) {
+            const data = {
+              title: "Title of your share",
+              text: "Description of your share",
+              url: "upi://pay?pa=mab.037322004480280@axisbank&pn=me&am=1&mc=0000&cu=INR&tn=testing&sign=AAuN7izDWN5cb8A5scnUiNME+LkZqI2DWgkXlN1McoP6WZABa/KkFTiLvuPRP6/nWK8BPg/rPhb+u4QMrUEX10UsANTDbJaALcSM9b8Wk218X+55T/zOzb7xoiB+BcX8yYuYayELImXJHIgL/c7nkAnHrwUCmbM97nRbCVVRvU0ku3Tr",
+            };
+            await navigator.share(data);
+          } else {
+            throw new Error("Web Share API not supported");
+          }
+        } catch (error) {
+          console.error("Error sharing:", error.message);
+        }
+      }
+
+      
       async function shareLinkAndFile() {
         try {
           await generateQRCode(); // Ensure QR code is generated before attempting to retrieve it
